@@ -23,3 +23,15 @@ class JExport_OT_OpenBakeFolder(Operator):
   def execute(self, context):
     bpy.ops.wm.path_open(filepath=context.scene.bake_folder)
     return {'FINISHED'}
+
+
+class JExport_OT_OpenTextureFolder(Operator):
+  
+  bl_idname = "object.jex_ot_opentexturefolder"
+  bl_label = "Open Textures Folder"
+  bl_description = "Open the Textures folder" 
+  bl_options = {'REGISTER'}
+
+  def execute(self, context):
+    bpy.ops.wm.path_open(filepath=context.scene.texture_folder)
+    return {'FINISHED'}

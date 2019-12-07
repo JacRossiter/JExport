@@ -9,7 +9,6 @@ class JExport_PT_Panel(Panel):
     
     def draw(self, context):
         layout = self.layout
-
         c = layout.column()
         row = c.row()
         split = row.split(factor=0.3)
@@ -18,7 +17,6 @@ class JExport_PT_Panel(Panel):
         split = split.split()
         c = split.column()
         c.prop(context.scene, "engine_folder", text="")
-
         c = layout.column()
         row = c.row()
         split = row.split(factor=0.3)
@@ -47,6 +45,7 @@ class JExport_PT_Panel_Settings(Panel):
         
         layout = self.layout
         scene = context.scene
+        c = layout.column()
 
         ####### Testing Area
 
@@ -92,3 +91,32 @@ class JExport_PT_Panel_Export_Settings(Panel):
         row.prop(context.scene, "export_scale", text="Export Scale")
         row = layout.row()
         row.prop(context.scene, "export_smoothing", text="")
+
+
+
+
+class JExport_PT_Panel_Export_Textures(Panel):
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_label = "Export Textures"
+    bl_parent_id = "JExport_PT_Panel"
+    bl_category = "JExport"
+    bl_options = {'DEFAULT_CLOSED'}
+    
+    def draw(self, context):
+        
+        layout = self.layout
+        c = layout.column()
+        row = c.row()
+        split = row.split(factor=0.3)
+        c = split.column()
+        c.operator('object.jex_ot_opentexturefolder', text='Folder')
+        split = split.split()
+        c = split.column()
+        c.prop(context.scene, "texture_folder", text="")
+
+
+        row = layout.row(align=True)
+        row.scale_y = 1.5
+        row.operator('object.jex_ot_exporttextures', text='Export')
+

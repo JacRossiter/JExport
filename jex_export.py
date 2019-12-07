@@ -12,6 +12,8 @@ class JExport_Export:
     self.__export_applyModifiers = context.scene.apply_modifiers
     self.__export_prefix = context.scene.export_prefix
     
+    
+    
     #self.__export_includeTextures = context.scene.include_textures     ### Doesn't seem to do anything ###
     self.__export_exportScale = context.scene.export_scale
     self.__center_transform = context.scene.center_transform
@@ -167,3 +169,14 @@ class JExport_Export:
         
         bpy.context.area.type = area
 print('---------------------------------------')
+
+
+class JExport_ExportTextures:
+
+  def __init__(self, context):
+    self.__context = context
+    self.__texture_folder = context.scene.texture_folder
+
+  def export_textures(self):
+    print('Exported Textures')
+
