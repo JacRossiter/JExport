@@ -78,7 +78,7 @@ class JExport_Export:
         exportfolder = bakefolder
         exportscale = self.__export_exportScale/100
         
-        obj_list = [obj for obj in bpy.context.visible_objects if fnmatch.fnmatch(obj.name, "*_low")]
+        obj_list = [obj for obj in bpy.context.visible_objects if fnmatch.fnmatch(obj.name, "*_low") or fnmatch.fnmatch(obj.name, "*_high")]
         print(obj_list)
 
       # Engine Settings
@@ -142,7 +142,7 @@ class JExport_Export:
         exportscale = self.__export_exportScale/100
         
         for c in bpy.data.collections:
-          if fnmatch.fnmatch(c.name, "*_low"):
+          if fnmatch.fnmatch(c.name, "*_low") or fnmatch.fnmatch(c.name, "*_high"):
               collection_list.append(c)
 
       # Engine Settings
