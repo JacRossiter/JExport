@@ -28,3 +28,13 @@ class JExport_OT_ExportTexturesOperator(Operator):
         bat_exporttextures = JExport_ExportTextures(context)
         bat_exporttextures.export_textures()
         return {'FINISHED'}
+
+class JExport_OT_RefreshTextures(Operator):
+    bl_idname = "object.refreshtextures"
+    bl_label = "Refresh Textures"
+    bl_description = "Refresh Textures" 
+    bl_options = {'REGISTER'}
+
+    def execute(self, context):
+        bpy.ops.autoreload.reload_images()
+        return {'FINISHED'}

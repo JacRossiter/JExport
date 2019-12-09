@@ -4,7 +4,7 @@ from bpy.types import Panel
 class JExport_PT_Panel(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_label = "Batch Fbx export"
+    bl_label = "Export FBX"
     bl_category = "JExport"
     
     def draw(self, context):
@@ -99,7 +99,7 @@ class JExport_PT_Panel_Export_Textures(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_label = "Export Textures"
-    bl_parent_id = "JExport_PT_Panel"
+    #bl_parent_id = "JExport_PT_Panel"
     bl_category = "JExport"
     bl_options = {'DEFAULT_CLOSED'}
     
@@ -120,3 +120,28 @@ class JExport_PT_Panel_Export_Textures(Panel):
         row.scale_y = 1.5
         row.operator('object.jex_ot_exporttextures', text='Export')
 
+class JExport_PT_Panel_Texture_Settings(Panel):
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_label = "Texture Settings"
+    bl_parent_id = "JExport_PT_Panel_Export_Textures"
+    bl_category = "JExport"
+    bl_options = {'DEFAULT_CLOSED'}
+    
+    def draw(self, context):
+        
+        layout = self.layout
+        scene = context.scene
+        c = layout.column()
+        
+        
+        row = c.row()
+        split = row.split(factor=0.3)
+        c = split.column()
+        c.label(text="Format")
+        split = split.split()
+        c = split.column()
+        c.prop(context.scene, "texture_type", text="")
+        c = layout.column()
+        row = c.row()
+        c.operator('object.refreshtextures', text='Refresh Textures', icon = "FILE_REFRESH")

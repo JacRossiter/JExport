@@ -76,15 +76,25 @@ bpy.types.Scene.export_prefix = BoolProperty(name="Export Prefix",
                 default=True,
                 description="Includes Prefix in Export")
 
+bpy.types.Scene.texture_type = EnumProperty(name="Type",
+                description="Defines What Texture type to use",
+                items=(
+                    ('.tga', 'TGA', 'Export TGA',0),
+                    ('.png', 'PNG', 'Export PNG',1)
+                    )
+                )
+
 classes = ( JExport_PT_Panel,
 JExport_OT_ExportOperator,
-JExport_OT_ExportTexturesOperator, 
+JExport_OT_ExportTexturesOperator,
+JExport_OT_RefreshTextures, 
 JExport_OT_OpenFolder, 
 JExport_OT_OpenBakeFolder,
 JExport_OT_OpenTextureFolder,
 JExport_PT_Panel_Settings,
 JExport_PT_Panel_Export_Settings,
-JExport_PT_Panel_Export_Textures)
+JExport_PT_Panel_Export_Textures,
+JExport_PT_Panel_Texture_Settings)
 
 
 def register():

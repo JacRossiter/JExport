@@ -1,4 +1,5 @@
 import bpy
+import os
 import fnmatch
 from . jex_utils import *
 
@@ -22,6 +23,8 @@ class JExport_Export:
     #testing
     self.__export_target = context.scene.export_target
     self.__export_type = context.scene.export_type
+
+    self.__texture_type = context.scene.texture_type
   
   def do_center(self, obj):
     if self.__center_transform:
@@ -176,7 +179,48 @@ class JExport_ExportTextures:
   def __init__(self, context):
     self.__context = context
     self.__texture_folder = context.scene.texture_folder
+    self.__texture_type = context.scene.texture_type
 
   def export_textures(self):
+    D = bpy.data
+
+
+    for image in D.images:
+      if not image.has_data:
+          continue
+      overwrite = 'true'
+
+      
+      
+      original_image = bpy.path.abspath(image.filepath)
+      print(original_image)
+      if original_image.endswith(self.__texture_type):
+        overwrite = 'false'
+
+      if fnmatch.fnmatch(image.name, "*.tga"):
+        image.name = image.name.replace('.tga', '')
+      if fnmatch.fnmatch(image.name, "*.png"):
+        image.name = image.name.replace('.png', '')
+      if fnmatch.fnmatch(image.name, "*.dds"):
+        image.name = image.name.replace('.dds', '')
+
+    
+      image.filepath_raw = self.__texture_folder + image.name + self.__texture_type
+      image.save()
+
+
+      
+      print(self.__texture_type)
+      if overwrite == 'true':
+        print('deleting ' + original_image)
+        os.remove(original_image)
+
+
     print('Exported Textures')
+
+  # I should switch to this extension check system:
+    #import os
+    #base=os.path.basename('my.file.ext')
+    #t = os.path.splitext(base)
+    #print(t) >>> ('my.file', '.ext')
 
