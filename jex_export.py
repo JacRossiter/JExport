@@ -228,12 +228,16 @@ class JExport_ExportTextures:
       if fnmatch.fnmatch(image.name, "*.dds"):
         image.name = image.name.replace('.dds', '')
 
-    
+      if self.__texture_type == '.tga':
+        image.file_format = 'TARGA'
+      elif self.__texture_type == '.png':
+        image.file_format = 'PNG'
+
       image.filepath_raw = self.__texture_folder + image.name + self.__texture_type
       image.save()
 
 
-      
+      #removes old file
       print(self.__texture_type)
       if overwrite == 'true':
         print('deleting ' + original_image)
