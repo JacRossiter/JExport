@@ -46,18 +46,10 @@ class JExport_Export:
     bake_space_transform=self.__export_applyTransform,
     use_mesh_modifiers=self.__export_applyModifiers,
     path_mode='ABSOLUTE')
-  
-  
-  def collections_recursive(self, c, c_list):
-    if not c.exclude:
-        c_list.append(c)
-    if c.children:
-        for _c in c.children:
-            self.collections_recursive(_c, c_list)
-    else:
-        return c_list
 
   def do_export(self):
+
+    collection_list = []
     try:
       bpy.ops.object.mode_set(mode='OBJECT')
     except:
@@ -138,14 +130,9 @@ class JExport_Export:
 # Export SM_ collections
 
     elif self.__export_target == 'COLLECTION':
-      enabled_collections = []
-      export_list = []
-
-      c = bpy.context.view_layer.layer_collection
-      self.collections_recursive(c, enabled_collections)
-
-
-      for collection in enabled_collections: # unhides all collections
+      
+      # unhides all collections
+      for collection in bpy.context.view_layer.layer_collection.children: # unhides all collections
         collection.hide_viewport = False
       bpy.ops.object.hide_view_clear()
 
@@ -154,45 +141,34 @@ class JExport_Export:
         exportfolder = bakefolder
         exportscale = self.__export_exportScale/100
         
-        for c in enabled_collections:
+        for c in bpy.data.collections:
           if fnmatch.fnmatch(c.name, "*_low") or fnmatch.fnmatch(c.name, "*_high"):
-              if c.has_objects():
-                  export_list.append(c)
-        
+              collection_list.append(c)
 
       # Engine Settings
       elif self.__export_type == 'ENGINE':
         exportfolder = enginefolder
         exportscale = self.__export_exportScale
 
-        for c in enabled_collections:
-          if fnmatch.fnmatch(c.name, "SM_"):
-              if c.has_objects():
-                  export_list.append(c)
-            
+        for c in bpy.data.collections:
+          if fnmatch.fnmatch(c.name, "SM_*"):
+              collection_list.append(c)
 
-      for c in export_list:
+      for c in collection_list:
         bpy.ops.object.select_all(action='DESELECT')
-        print('deselecting all')
         # Selects Objects in Collection
-        
-        for obj in c.collection.all_objects:
-          obj.select_set(state = True)  
-          print('selecting', obj.name)
-
-        print(bpy.context.selected_objects)
-        
+        for obj in c.all_objects:
+          obj.select_set(state = True)
         
         export_name = c.name
         if self.__export_prefix == False:
           export_name = c.name.replace('SM_', '')
-          print('exporting ',export_name)
+          print(export_name)
           
 
         bpy.ops.export_scene.fbx(check_existing=False, filepath=exportfolder + export_name + ".fbx", filter_glob="*.fbx",use_selection=True,use_armature_deform_only=True,
         mesh_smooth_type=self.__context.scene.export_smoothing,add_leaf_bones=False,global_scale=exportscale,bake_space_transform=self.__export_applyTransform,
         use_mesh_modifiers=self.__export_applyModifiers,path_mode='ABSOLUTE')
-        print('export complete')
         
         bpy.context.area.type = area
 print('---------------------------------------')
