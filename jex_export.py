@@ -165,8 +165,9 @@ class JExport_Export:
         exportfolder = enginefolder
         exportscale = self.__export_exportScale
 
+        print('generating export list')
         for c in enabled_collections:
-          if fnmatch.fnmatch(c.name, "SM_"):
+          if fnmatch.fnmatch(c.name, "SM_*"):
               if c.has_objects():
                   export_list.append(c)
             
@@ -233,7 +234,7 @@ class JExport_ExportTextures:
       elif self.__texture_type == '.png':
         image.file_format = 'PNG'
 
-      image.filepath_raw = self.__texture_folder + image.name + self.__texture_type
+      image.filepath_raw = self.__texture_folder + image.name
       image.save()
 
 
