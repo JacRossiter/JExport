@@ -169,6 +169,10 @@ class JExport_Export:
       # Engine Settings
       elif self.__export_type == 'ENGINE':
         exportfolder = enginefolder + "GoblinWare" + "//" + "Meshes" + "/"
+        try:
+          os.makedirs(exportfolder)
+        except:
+          pass
         exportscale = self.__export_exportScale
 
         print('generating export list')
