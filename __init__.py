@@ -3,7 +3,7 @@ bl_info = {
     "author" : "Jac Rossiter, jayanam",
     "descrtion" : "Batch export as Fbx",
     "blender" : (2, 80, 0),
-    "version" : (0, 3, 1, 5),
+    "version" : (0, 3, 1, 6),
     "location" : "JExport panel",
     "warning" : "",
     "category" : "Export"
