@@ -239,7 +239,7 @@ class JExport_ExportTextures:
 
 
       #removes old file
-      print(self.__texture_type)
+      print("Exported: ", self.__texture_type)
       if overwrite == 'true':
         print('deleting ' + original_image)
         os.remove(original_image)
