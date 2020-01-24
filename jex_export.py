@@ -63,9 +63,10 @@ class JExport_Export:
     except:
       pass
 
-    # Creates list of Objects with SM_ prefix
+    obj = bpy.context.view_layer.objects.active
     bakefolder = self.__bake_folder + "/"
     enginefolder = self.__engine_folder + "/"
+    
 
     area = bpy.context.area.type
     bpy.context.area.type = 'VIEW_3D'
@@ -113,6 +114,11 @@ class JExport_Export:
         for child in get_children(obj):
           child.select_set(state=True)
         
+        exportfolder = self.__engine_folder + obj.users_collection[0].name + "//" + "Meshes" + "//"
+        try:
+          os.makedirs(exportfolder)
+        except:
+          pass
 
         export_name = obj.name
         if self.__export_prefix == False:
