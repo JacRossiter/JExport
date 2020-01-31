@@ -1,7 +1,6 @@
 import bpy
 
 from bpy.types import Operator
-
 from . jex_export import JEXPORT_Export, JEXPORT_ExportTextures
 	
 class JEXPORT_OT_ExportOperator(Operator):

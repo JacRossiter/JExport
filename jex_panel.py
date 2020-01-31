@@ -11,20 +11,6 @@ class JEXPORT_PT_panel(Panel):
         layout = self.layout
         c = layout.column()
         row = c.row()
-        split = row.split(factor=0.3)
-        c = split.column()
-        c.operator('object.jex_ot_openfolder', text='Engine')
-        split = split.split()
-        c = split.column()
-        c.prop(context.scene, "engine_folder", text="")
-        c = layout.column()
-        row = c.row()
-        split = row.split(factor=0.3)
-        c = split.column()
-        c.operator('object.jex_ot_openbakefolder', text='Bake')
-        split = split.split()
-        c = split.column()
-        c.prop(context.scene, "bake_folder", text="")
         row = layout.row(align=True)
         row.scale_y = 1.5
         row.operator('object.jex_ot_operator', text='Export')
@@ -42,6 +28,22 @@ class JEXPORT_PT_Panel_Settings(Panel):
         layout = self.layout
         scene = context.scene
         c = layout.column()
+
+        row = c.row()
+        split = row.split(factor=0.3)
+        c = split.column()
+        c.operator('object.jex_ot_openfolder', text='Engine')
+        split = split.split()
+        c = split.column()
+        c.prop(context.scene, "engine_folder", text="")
+        c = layout.column()
+        row = c.row()
+        split = row.split(factor=0.3)
+        c = split.column()
+        c.operator('object.jex_ot_openbakefolder', text='Bake')
+        split = split.split()
+        c = split.column()
+        c.prop(context.scene, "bake_folder", text="")
 
         ####### Testing Area
 

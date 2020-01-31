@@ -12,17 +12,11 @@ class JEXPORT_Export:
     self.__export_applyTransform = context.scene.apply_transform
     self.__export_applyModifiers = context.scene.apply_modifiers
     self.__export_prefix = context.scene.export_prefix
-    #self.__export_object_prefix = context.scene.__export_object_prefix
-     
-    #self.__export_includeTextures = context.scene.include_textures     ### Doesn't seem to do anything ###
     self.__export_exportScale = context.scene.export_scale
     self.__center_transform = context.scene.center_transform
     self.__export_objects = context.selected_objects
-
-    #testing
     self.__export_target = context.scene.export_target
     self.__export_type = context.scene.export_type
-
     self.__texture_type = context.scene.texture_type
   
   def do_center(self, obj):
@@ -45,8 +39,7 @@ class JEXPORT_Export:
     bake_space_transform=self.__export_applyTransform,
     use_mesh_modifiers=self.__export_applyModifiers,
     path_mode='ABSOLUTE')
-  
-  
+    
   def collections_recursive(self, c, c_list):
     if not c.exclude:
         c_list.append(c)
@@ -65,13 +58,11 @@ class JEXPORT_Export:
     obj = bpy.context.view_layer.objects.active
     bakefolder = self.__bake_folder + "/"
     enginefolder = self.__engine_folder + "/"
-    
 
     area = bpy.context.area.type
     bpy.context.area.type = 'VIEW_3D'
 
-############
-# Export SM_ objects
+    # Export SM_ objects
     if self.__export_target == 'OBJECT':
       print("exporting objects")
 
@@ -97,9 +88,6 @@ class JEXPORT_Export:
 
         obj_list = [obj for obj in bpy.context.visible_objects if fnmatch.fnmatch(obj.name, "SM_*")]
         print(obj_list)
-
-
-
       # SM_ objects to engine
       for obj in obj_list:
         print(obj.name)
@@ -133,22 +121,19 @@ class JEXPORT_Export:
           bpy.ops.export_scene.fbx(check_existing=False, filepath=exportfolder + export_name + ".fbx", filter_glob="*.fbx",use_selection=True,use_armature_deform_only=True,
           mesh_smooth_type=self.__context.scene.export_smoothing,add_leaf_bones=False,global_scale=exportscale,bake_space_transform=self.__export_applyTransform,
           use_mesh_modifiers=self.__export_applyModifiers,path_mode='ABSOLUTE')
-        
 
         if old_pos is not None:
           set_object_to_loc(obj, old_pos)
 
         bpy.context.area.type = area
 
-# Export SM_ collections
-
+    # Export SM_ collections
     elif self.__export_target == 'COLLECTION':
       enabled_collections = []
       export_list = []
 
       c = bpy.context.view_layer.layer_collection
       self.collections_recursive(c, enabled_collections)
-
 
       for collection in enabled_collections: # unhides all collections
         collection.hide_viewport = False
@@ -163,7 +148,6 @@ class JEXPORT_Export:
           if fnmatch.fnmatch(c.name, "*_low") or fnmatch.fnmatch(c.name, "*_high"):
               if c.has_objects():
                   export_list.append(c)
-        
 
       # Engine Settings
       elif self.__export_type == 'ENGINE':
@@ -179,7 +163,6 @@ class JEXPORT_Export:
           if fnmatch.fnmatch(c.name, "SM_*"):
               if c.has_objects():
                   export_list.append(c)
-            
 
       for c in export_list:
         bpy.ops.object.select_all(action='DESELECT')
@@ -192,12 +175,10 @@ class JEXPORT_Export:
 
         print(bpy.context.selected_objects)
         
-        
         export_name = c.name
         if self.__export_prefix == False:
           export_name = c.name.replace('SM_', '')
           print('exporting ',export_name)
-          
 
         bpy.ops.export_scene.fbx(check_existing=False, filepath=exportfolder + export_name + ".fbx", filter_glob="*.fbx",use_selection=True,use_armature_deform_only=True,
         mesh_smooth_type=self.__context.scene.export_smoothing,add_leaf_bones=False,global_scale=exportscale,bake_space_transform=self.__export_applyTransform,
@@ -206,7 +187,6 @@ class JEXPORT_Export:
         
         bpy.context.area.type = area
 print('---------------------------------------')
-
 
 class JEXPORT_ExportTextures:
 
@@ -217,15 +197,10 @@ class JEXPORT_ExportTextures:
 
   def export_textures(self):
     D = bpy.data
-
-
     for image in D.images:
       if not image.has_data:
           continue
       overwrite = 'true'
-
-      
-      
       original_image = bpy.path.abspath(image.filepath)
       print(original_image)
       if original_image.endswith(self.__texture_type):
@@ -246,13 +221,11 @@ class JEXPORT_ExportTextures:
       image.filepath_raw = self.__texture_folder + image.name
       image.save()
 
-
       #removes old file
       print("Exported: ", self.__texture_type)
       if overwrite == 'true':
         print('deleting ' + original_image)
         os.remove(original_image)
-
 
     print('Exported Textures')
 

@@ -12,17 +12,19 @@ bl_info = {
 import importlib
 
 if "bpy" in locals():    
-    importlib.reload(jex_panel)
-    importlib.reload(jex_op)
+    importlib.reload(jex_export)
     importlib.reload(jex_folder_op)
+    importlib.reload(jex_op)
+    importlib.reload(jex_panel)
+    importlib.reload(jex_utils)
     
 import bpy
-
 from bpy.props import *
-
-from . jex_panel import *
-from . jex_op import *
+from . jex_export import *
 from . jex_folder_op import *
+from . jex_op import *
+from . jex_panel import *
+from . jex_utils import *
 
 bpy.types.Scene.engine_folder = StringProperty(name="engine folder", 
                subtype="DIR_PATH", 
@@ -67,6 +69,7 @@ bpy.types.Scene.export_smoothing = EnumProperty(name="Smoothing",
 bpy.types.Scene.export_target = EnumProperty(name="Target",
                 description="Defines whether to export Object or Collection",
                 items=(
+                    ('BOTH', 'Both', 'Export Both',3),
                     ('OBJECT', 'Object', 'Export Objects',0),
                     ('COLLECTION', 'Collection', 'Export Collections',1)
                     )
