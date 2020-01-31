@@ -12,7 +12,7 @@ class JEXPORT_Export:
     self.__export_applyTransform = context.scene.apply_transform
     self.__export_applyModifiers = context.scene.apply_modifiers
     self.__export_prefix = context.scene.export_prefix
-    self.__export_object_prefix = context.scene.__export_object_prefix
+    #self.__export_object_prefix = context.scene.__export_object_prefix
      
     #self.__export_includeTextures = context.scene.include_textures     ### Doesn't seem to do anything ###
     self.__export_exportScale = context.scene.export_scale

@@ -12,9 +12,9 @@ bl_info = {
 import importlib
 
 if "bpy" in locals():    
-    importlib.reload(jex_panel)    
-    importlib.reload(jex_op)    
-    importlib.reload(jex_folder_op)    
+    importlib.reload(jex_panel)
+    importlib.reload(jex_op)
+    importlib.reload(jex_folder_op)
     
 import bpy
 

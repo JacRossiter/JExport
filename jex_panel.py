@@ -13,7 +13,7 @@ class JEXPORT_PT_panel(Panel):
         row = c.row()
         split = row.split(factor=0.3)
         c = split.column()
-        c.operator('object.jex_ot_openfolder', text='EEngine')
+        c.operator('object.jex_ot_openfolder', text='Engine')
         split = split.split()
         c = split.column()
         c.prop(context.scene, "engine_folder", text="")
@@ -52,7 +52,7 @@ class JEXPORT_PT_Panel_Settings(Panel):
         row = layout.row()
         row.prop(context.scene, "export_target", text="")
         row.prop(context.scene, "export_type", text="")
-        row.prop(context.scene, "export_type")
+        #row.prop(context.scene, "export_type")
         
         row = layout.row(align=True)
         row.alignment='CENTER'
