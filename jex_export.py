@@ -18,8 +18,8 @@ class JEXPORT_Export:
     self.__export_target = context.scene.export_target
     self.__export_type = context.scene.export_type
     self.__texture_type = context.scene.texture_type
-    self.__export_folder = "hello"    
     self.__obj_list = []
+    self.__obj_pos_list = []
 
   def exportfbx(self):
     bpy.ops.export_scene.fbx(check_existing=False,
@@ -40,8 +40,6 @@ class JEXPORT_Export:
     except:
       pass
 
-    print(self.__export_folder)
-
     obj = bpy.context.view_layer.objects.active
     #bakefolder = self.__bake_folder + "/"
     #enginefolder = self.__engine_folder + "/"
@@ -50,22 +48,83 @@ class JEXPORT_Export:
     bpy.context.area.type = 'VIEW_3D'
 
     if self.__export_target == 'OBJECT':
-      self.create_object_list()
-      self.export()
+      self.create_object_list()  
 
     elif self.__export_target == 'COLLECTION':
       self.create_collection_list()
 
-    #self.export()
-    
+    self.export()
     bpy.context.area.type = area
 
   def export(self):
+    export_name = ""
+    file_name = ""
+
+    for obj in self.__obj_list:
+      # Desect all objects
+      bpy.ops.object.select_all(action='DESELECT')      
+      
+      #__obj_list is a list of lists (colletion, object_list[]) to need to loop the object list      
+      for o in obj[1]:        
+        #select object
+        o.select_set(state = True)
+
+        # Center selected object
+        self.center_object(o)
+
+        # TODO add bool
+        # Select children if tthey exist
+        for child in get_children(obj):
+          child.select_set(state=True)
+        
+        #set exportport name even though it may change later
+        export_name = o.name
+      
+      # Setup export file path
+      if o.users_collection[0].name != "Master Collection": 
+        file_name = obj.users_collection[0].name
+        export_name = ""
+      exportfolder =  self.__engine_folder + file_name + "/"
+      exportscale = self.__export_exportScale      
+      if self.__export_type == 'BAKE':
+        exportfolder = self.__bake_folder + "/"
+        exportscale = self.__export_exportScale/100 #why 100
+      
+      try:
+        os.makedirs(exportfolder)
+      except:
+        pass
+
+      # Deal with prefex names
+      #export_name = obj.name
+      #if self.__export_prefix == False:
+      #  export_name = obj.name.replace('SM_', '')
+
+      # Do the actual export
+      bpy.ops.export_scene.fbx(check_existing=False, filepath=exportfolder + export_name + ".fbx", filter_glob="*.fbx",use_selection=True,use_armature_deform_only=True,
+      mesh_smooth_type=self.__context.scene.export_smoothing,add_leaf_bones=False,global_scale=self.__export_exportScale,bake_space_transform=self.__export_applyTransform,
+      use_mesh_modifiers=self.__export_applyModifiers,path_mode='ABSOLUTE')
+
+      # Return objects to old position 
+      self.uncenter_objects()
+
+  def center_object(self, obj):
+    #add object to list with name and old position
+    if self.__center_transform:
+      self.__obj_pos_list.append([obj, obj.location])
+      obj.location = (0,0,0)
+  
+  def uncenter_objects(self):    
+    #loop list and set object to old position
+    for o in self.__obj_pos_list:
+      o[0].location = o[1]
+
+  def export_old(self):
     for obj in self.__obj_list:
       # Get correct objects selected
-      print(obj.name)
-      bpy.ops.object.select_all(action='DESELECT')
-      obj.select_set(state = True)
+      bpy.ops.object.select_all(action='DESELECT')      
+      for o in obj[1]:
+        o.select_set(state = True)
 
       # Center selected object
       old_pos = self.do_center(obj)
@@ -100,7 +159,16 @@ class JEXPORT_Export:
       if old_pos is not None:
         set_object_to_loc(obj, old_pos)
   
-  def create_object_list(self):
+  def create_object_list(self):    
+    for obj in bpy.data.objects:
+      #make list of objects not in collections
+      if obj.users_collection[0].name != "Master Collection":
+        continue
+      
+      self.__obj_list.append([obj.users_collection[0], [obj]])
+    print(self.__obj_list)
+    
+  def create_object_list_old(self):
     print("exporting objects")
 
     # unhides all collections
@@ -157,6 +225,7 @@ class JEXPORT_Export:
         obj.select_set(state = True)  
         print('selecting', obj.name)
       
+      # Set export name to be collection name
       export_name = c.name
       if self.__export_prefix == False:
         export_name = c.name.replace('SM_', '')

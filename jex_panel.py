@@ -9,11 +9,14 @@ class JEXPORT_PT_panel(Panel):
     
     def draw(self, context):
         layout = self.layout
-        c = layout.column()
-        row = c.row()
-        row = layout.row(align=True)
-        row.scale_y = 1.5
-        row.operator('object.jex_ot_operator', text='Export')
+        col = layout.column()
+        col.scale_y = 1.5
+        col.operator('object.jex_ot_operator', text='Export')
+        
+        col = layout.column()
+        col.prop(context.scene, "selected_only", text="selected only")
+        col.prop(context.scene, "collections_as_object", text="collections as one object")
+        col.prop(context.scene, "folders_from_names", text="/ becomes folder")
 
 class JEXPORT_PT_Panel_Settings(Panel):
     bl_space_type = "VIEW_3D"
@@ -23,8 +26,7 @@ class JEXPORT_PT_Panel_Settings(Panel):
     bl_category = "JEXPORT"
     bl_options = {'DEFAULT_CLOSED'}
     
-    def draw(self, context):
-        
+    def draw(self, context):        
         layout = self.layout
         scene = context.scene
         c = layout.column()
@@ -60,7 +62,6 @@ class JEXPORT_PT_Panel_Settings(Panel):
         row.alignment='CENTER'
 
         ####### Testing Area
-
 
 class JEXPORT_PT_Panel_Export_Settings(Panel):
     bl_space_type = "VIEW_3D"
@@ -102,14 +103,14 @@ class JEXPORT_PT_Panel_Export_Textures(Panel):
     def draw(self, context):
         
         layout = self.layout
-        c = layout.column()
-        row = c.row()
+        col = layout.column()
+        row = col.row()
         split = row.split(factor=0.3)
-        c = split.column()
-        c.operator('object.jex_ot_opentexturefolder', text='Folder')
+        col = split.column()
+        col.operator('object.jex_ot_opentexturefolder', text='Folder')
         split = split.split()
-        c = split.column()
-        c.prop(context.scene, "texture_folder", text="")
+        col = split.column()
+        col.prop(context.scene, "texture_folder", text="")
 
 
         row = layout.row(align=True)
@@ -128,14 +129,14 @@ class JEXPORT_PT_Panel_Texture_Settings(Panel):
         
         layout = self.layout
         scene = context.scene
-        c = layout.column()
-        row = c.row()
+        col = layout.column()
+        row = col.row()
         split = row.split(factor=0.3)
-        c = split.column()
-        c.label(text="Format")
+        col = split.column()
+        col.label(text="Format")
         split = split.split()
-        c = split.column()
-        c.prop(context.scene, "texture_type", text="")
-        c = layout.column()
-        row = c.row()
-        c.operator('object.refreshtextures', text='Refresh Textures', icon = "FILE_REFRESH")
+        col = split.column()
+        col.prop(context.scene, "texture_type", text="")
+        col = layout.column()
+        row = col.row()
+        col.operator('object.refreshtextures', text='Refresh Textures', icon = "FILE_REFRESH")

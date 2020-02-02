@@ -34,6 +34,18 @@ bpy.types.Scene.bake_folder = StringProperty(name="Bake folder",
                subtype="DIR_PATH", 
                description="Directory to export the Bake files into")
 
+bpy.types.Scene.collections_as_object = BoolProperty(name="Export Collections as one object",
+                default=True,
+                description="All objects in collection get exported into 1 fbx with name of collection")
+
+bpy.types.Scene.selected_only = BoolProperty(name="Only Export Selected Objects",
+                default=False,
+                description="Export selection and ignore un selected objects")
+
+bpy.types.Scene.folders_from_names = BoolProperty(name="Use / in names to change folders",
+                default=True,
+                description="create folder structures by using / in folder names")
+
 bpy.types.Scene.texture_folder = StringProperty(name="Texture folder", 
                subtype="DIR_PATH", 
                description="Directory to export the Texture files into")

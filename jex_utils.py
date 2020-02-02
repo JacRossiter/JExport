@@ -4,10 +4,6 @@ import bpy
 def get_object_loc(obj):
   return obj.location.copy()
 
-# Set the location of an object
-def set_object_to_loc(obj, loc):
-  obj.location = loc
-
 def get_children(obj): 
   children = [] 
   for ob in bpy.data.objects: 
