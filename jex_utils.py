@@ -20,3 +20,18 @@ def selected_to_cursor():
 def set_cursor_loc(context, loc : tuple):
   context.scene.cursor.location = loc
 
+def collections_recursive(self, c, c_list):    
+  if not c.exclude:
+      c_list.append(c)
+  if c.children:
+      for _c in c.children:
+          self.collections_recursive(_c, c_list)
+  else:
+      return c_list
+
+def do_center(self, obj):
+  if self.__center_transform:
+    loc = get_object_loc(obj)
+    set_object_to_loc(obj, (0,0,0))
+    return loc
+  return None
