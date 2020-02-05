@@ -68,7 +68,7 @@ class JEXPORT_Export:
 
   def createObjectList(self):
     for obj in bpy.data.objects:
-      
+      #if self.__selected_only == True and obj.selec
       if obj.users_collection[0].name == "Master Collection": #in base of scene
         if self.validForExport(obj) == False:          
           continue
