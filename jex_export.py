@@ -6,6 +6,8 @@ from . jex_utils import *
 class JEXPORT_Export:
   def __init__(self, context):
     self.__context = context
+    self.__debug_export = context.scene.debug_export
+    self.__selected_only = context.scene.selected_only
     self.__engine_folder = context.scene.engine_folder
     self.__bake_folder = context.scene.bake_folder
     self.__export_applyTransform = context.scene.apply_transform
@@ -19,8 +21,7 @@ class JEXPORT_Export:
     self.__texture_type = context.scene.texture_type
     self.__obj_list = []
     self.__obj_pos_list = []
-    print(self.__engine_folder)
-    print(self.__bake_folder)
+    print("----EXPORT INIT----") #just see when this is called, safe to delete
 
   def exportfbx(self):
     bpy.ops.export_scene.fbx(check_existing=False,
@@ -40,46 +41,83 @@ class JEXPORT_Export:
       bpy.ops.object.mode_set(mode='OBJECT')
     except:
       pass
-
     area = bpy.context.area.type
     bpy.context.area.type = 'VIEW_3D'
 
+    self.checkPaths()
+      
     if self.__export_target == 'OBJECT':
-      self.create_object_list()  
+      self.createObjectList()  
 
     elif self.__export_target == 'COLLECTION':
-      self.create_collection_list()
+      self.createColletionList()
 
     elif self.__export_target == 'BOTH':
-      self.create_object_list()
-      self.create_collection_list()
+      self.createObjectList()
+      self.createColletionList()
 
     self.export()
     
     bpy.context.area.type = area
 
-  def create_object_list(self):    
+  def checkPaths(self):
+    if self.__engine_folder == "":
+      self.__engine_folder = os.path.dirname(bpy.data.filepath) + "\\"
+    if self.__bake_folder == "":
+      self.__bake_folder = os.path.dirname(bpy.data.filepath) + "\\"
+
+  def createObjectList(self):
     for obj in bpy.data.objects:
+      
       if obj.users_collection[0].name == "Master Collection": #in base of scene
+        if self.validForExport(obj) == False:          
+          continue
         self.__obj_list.append(["OBJECT", "", [obj], True]) 
 
-  def create_collection_list(self):
+  def createColletionList(self):
     for col in bpy.data.collections:
-      if col.name[-1] == "\\" or col.name[-1] == "/": #export objects collections whos names end with \ or / to individual files
+      if self.validForExport(col) == False:
+        continue
+      if self.treatAsFolder(col) == True:
         for obj in col.objects:
-          self.__obj_list.append(["OBJECT", col, [obj], True])
+          self.__obj_list.append(["OBJECT", col.name, [obj], True])
       else:
-        self.__obj_list.append(["COLLECTION", col, col.objects, False])
+        self.__obj_list.append(["COLLECTION", col.name, col.objects, False])
+  
+  def treatAsFolder(self, item):
+    #export objects collections whos names end with \ or / to individual files
+    if item.name[-1] == "\\" or item.name[-1] == "/":
+      return True
+    return False
 
-  def shouldExportCheck(self, item)
-    print("checking")
-    return true
+  def validForExport(self, item):
+    if "*" in item.name:
+      return False
+    if item.hide_viewport:
+      return False
+    try:
+      for o in bpy.context.view_layer.layer_collection.children:
+        if o.collection == item:
+          if o.hide_viewport == True or o.exclude == True:
+            return False
+          return True
+    except:
+      pass    
+    try:
+      for o in bpy.context.scene.objects:
+        if o == item:
+          if o.hide_viewport == True:
+            print("not valid export222")
+            return False
+          return True
+    except:
+      pass    
+    return False
 
   def export(self):    
     itemName =""
     fileName = ""
     folderName = ""
-
     exportScale = self.__export_exportScale #TODO this is not used
     
     #__obj_list is (type, colletion, object_list[], get_moved_BOOL)
@@ -87,20 +125,20 @@ class JEXPORT_Export:
       # Desect all objects
       bpy.ops.object.select_all(action='DESELECT')      
 
-      #prepare objects for export,       
+      #prepare objects for export
       for o in obj[2]:                
         o.select_set(state = True)
         if obj[3] == True:
-          self.center_object(o)
+          self.centerObject(o)
         for child in get_children(obj): # TODO add bool
           child.select_set(state=True)
       
       # Setup export file path
       if obj[0] == "OBJECT":  
-        itemName = obj[1].name + obj[2][0].name
+        itemName = obj[1] + obj[2][0].name
         
       elif obj[0] == "COLLECTION":
-        itemName = obj[1].name
+        itemName = obj[1]
       
       if "/" in itemName:
         itemName = itemName.replace("/", "\\")
@@ -123,70 +161,19 @@ class JEXPORT_Export:
       # Do the actual export
       filePath = self.__engine_folder + itemName + ".fbx"
       print(filePath)
-      export = True
-      if (export == True):
+      if (self.__debug_export == True):
         bpy.ops.export_scene.fbx(check_existing=False, filepath=filePath, filter_glob="*.fbx",use_selection=True,use_armature_deform_only=True,
                               mesh_smooth_type=self.__context.scene.export_smoothing,add_leaf_bones=False,global_scale=self.__export_exportScale,bake_space_transform=self.__export_applyTransform,
                               use_mesh_modifiers=self.__export_applyModifiers,path_mode='ABSOLUTE')
+    self.uncenterObjects()
 
-    # Return objects to old position so
-    self.uncenter_objects()
-
-  def center_object(self, obj):
+  def centerObject(self, obj):
     #add object to list with name and old position
     if self.__center_transform:
       self.__obj_pos_list.append([obj, obj.location.copy()])
       obj.location = (0,0,0)
 
-  def uncenter_objects(self):    
+  def uncenterObjects(self):    
     #loop list and set object to old position
     for o in self.__obj_pos_list:
-      o[0].location = o[1]         
-  
-class JEXPORT_ExportTextures:
-
-  def __init__(self, context):
-    self.__context = context
-    self.__texture_folder = context.scene.texture_folder
-    self.__texture_type = context.scene.texture_type
-
-  def export_textures(self):
-    D = bpy.data
-    for image in D.images:
-      if not image.has_data:
-          continue
-      overwrite = 'true'
-      original_image = bpy.path.abspath(image.filepath)
-      print(original_image)
-      if original_image.endswith(self.__texture_type):
-        overwrite = 'false'
-
-      if fnmatch.fnmatch(image.name, "*.tga"):
-        image.name = image.name.replace('.tga', '')
-      if fnmatch.fnmatch(image.name, "*.png"):
-        image.name = image.name.replace('.png', '')
-      if fnmatch.fnmatch(image.name, "*.dds"):
-        image.name = image.name.replace('.dds', '')
-
-      if self.__texture_type == '.tga':
-        image.file_format = 'TARGA'
-      elif self.__texture_type == '.png':
-        image.file_format = 'PNG'
-
-      image.filepath_raw = self.__texture_folder + image.name
-      image.save()
-
-      #removes old file
-      print("Exported: ", self.__texture_type)
-      if overwrite == 'true':
-        print('deleting ' + original_image)
-        os.remove(original_image)
-
-    print('Exported Textures')
-
-  # I should switch to this extension check system:
-    #import os
-    #base=os.path.basename('my.file.ext')
-    #t = os.path.splitext(base)
-    #print(t) >>> ('my.file', '.ext')
-
+      o[0].location = o[1]

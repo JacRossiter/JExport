@@ -26,6 +26,10 @@ from . jex_op import *
 from . jex_panel import *
 from . jex_utils import *
 
+bpy.types.Scene.debug_export = BoolProperty(name="dont export",
+                default=True,
+                description="easy way to stop actual export happening")
+
 bpy.types.Scene.engine_folder = StringProperty(name="engine folder", 
                subtype="DIR_PATH", 
                description="Directory to export the fbx files into")
@@ -34,13 +38,29 @@ bpy.types.Scene.bake_folder = StringProperty(name="Bake folder",
                subtype="DIR_PATH", 
                description="Directory to export the Bake files into")
 
-bpy.types.Scene.collections_as_object = BoolProperty(name="Export Collections as one object",
-                default=True,
-                description="All objects in collection get exported into 1 fbx with name of collection")
-
 bpy.types.Scene.selected_only = BoolProperty(name="Only Export Selected Objects",
                 default=False,
                 description="Export selection and ignore un selected objects")
+
+bpy.types.Scene.export_hidden = BoolProperty(name="Export Hidden Objects",
+                default=False,
+                description="Export objects even if they are hidden")
+
+bpy.types.Scene.exclude_star = BoolProperty(name="Don't Export Objects Containing *",
+                default=True,
+                description="Objects or Collections with * appearing anywhere in the name wont get exported")
+
+bpy.types.Scene.merge_ampersand = BoolProperty(name="Merge All Chidren Of Collections Containing \&",
+                default=True,
+                description="Collections with & anywhere in name will have all containing objects merged into 1 on export")
+
+bpy.types.Scene.unreal_only = BoolProperty(name="Only Export Objects With Unreal Prefixes",
+                default=False,
+                description="Object must have SM_ or SK_ prefix to get exported")
+
+bpy.types.Scene.remove_unreal = BoolProperty(name="Remove Unreal Prefix on Export",
+                default=False,
+                description="Objects with SM_ or SK_ in the name will have it removed on export")                
 
 bpy.types.Scene.folders_from_names = BoolProperty(name="Use / in names to change folders",
                 default=True,

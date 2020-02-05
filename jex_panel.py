@@ -15,8 +15,7 @@ class JEXPORT_PT_panel(Panel):
         
         col = layout.column()
         col.prop(context.scene, "selected_only", text="selected only")
-        col.prop(context.scene, "collections_as_object", text="collections as one object")
-        col.prop(context.scene, "folders_from_names", text="/ becomes folder")
+        col.prop(context.scene, "export_hidden", text="export hidden")
 
 class JEXPORT_PT_Panel_Settings(Panel):
     bl_space_type = "VIEW_3D"
@@ -47,21 +46,18 @@ class JEXPORT_PT_Panel_Settings(Panel):
         c = split.column()
         c.prop(context.scene, "bake_folder", text="")
 
-        ####### Testing Area
-
-        #row = layout.row(align=True)
-        #row.alignment='CENTER'
-        #row.label(text='--- Testing Area ---')
-
         row = layout.row()
         row.prop(context.scene, "export_target", text="")
         row.prop(context.scene, "export_type", text="")
-        #row.prop(context.scene, "export_type")
-        
-        row = layout.row(align=True)
-        row.alignment='CENTER'
 
-        ####### Testing Area
+        col = layout.column()
+        col.prop(context.scene, "exclude_star", text="exclude *")
+        col.prop(context.scene, "merge_ampersand", text="merge &")
+        col.prop(context.scene, "unreal_only", text="unreal prefix only")
+        col.prop(context.scene, "remove_unreal", text="remove unreal prefix")    
+        col.prop(context.scene, "debug_export", text="export")    
+        
+
 
 class JEXPORT_PT_Panel_Export_Settings(Panel):
     bl_space_type = "VIEW_3D"
