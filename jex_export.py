@@ -21,11 +21,13 @@ class JEXPORT_Export:
     self.__texture_type = context.scene.texture_type
     self.__obj_list = []
     self.__obj_pos_list = []
+    self.__should_dete_collections = True
+    self.__collections_to_delete = []
     self.__exclude_character = "*"
     self.__merge_character = "&"
     print("----EXPORT INIT----") #just see when this is called, safe to delete
 
-  def exportfbx(self):
+  def exportfbx(self): #is this used
     bpy.ops.export_scene.fbx(check_existing=False,
     filepath=exportfolder + c.name + ".fbx",
     filter_glob="*.fbx",
@@ -89,6 +91,7 @@ class JEXPORT_Export:
       if self.__merge_character in col.name:
         duplicatedCol = self.duplicateCollection(col)
         self.__obj_list.append(["COLLECTION", duplicatedCol.name, duplicatedCol.objects, False])
+        self.__collections_to_delete.append(duplicatedCol)
         continue
       self.__obj_list.append(["COLLECTION", col.name, col.objects, False])
   
@@ -115,7 +118,6 @@ class JEXPORT_Export:
       for o in bpy.context.scene.objects:
         if o == item:
           if o.hide_viewport == True:
-            print("not valid export222")
             return False
           return True
     except:
@@ -185,8 +187,9 @@ class JEXPORT_Export:
       if (self.__debug_export == True):
         bpy.ops.export_scene.fbx(check_existing=False, filepath=filePath, filter_glob="*.fbx",use_selection=True,use_armature_deform_only=True,
                               mesh_smooth_type=self.__context.scene.export_smoothing,add_leaf_bones=False,global_scale=self.__export_exportScale,bake_space_transform=self.__export_applyTransform,
-                              use_mesh_modifiers=self.__export_applyModifiers,path_mode='ABSOLUTE')
+                              apply_scale_options = 'FBX_SCALE_ALL',use_mesh_modifiers=self.__export_applyModifiers,path_mode='ABSOLUTE')
     self.uncenterObjects()
+    self.deleteCollections()
 
   def centerObject(self, obj):
     #add object to list with name and old position
@@ -250,7 +253,6 @@ class JEXPORT_Export:
   def duplicateCollection(self, col):
       for obj in bpy.context.selected_objects:#is this needed
           obj.select_set(False)
-
       if col.name == "Master Collection":
           return
       if self.__merge_character not in col.name:
@@ -263,6 +265,12 @@ class JEXPORT_Export:
           self.applyModifiers(newObj)
           newObj.select_set(True)
       bpy.ops.object.join()
-      bpy.context.active_object.name = newName #is this needed
-      
+      bpy.context.active_object.name = newName #is this needed      
       return newCollection
+
+  def deleteCollections(self):
+    for col in self.__collections_to_delete:
+      for obj in col.objects:
+          bpy.data.objects.remove(obj, do_unlink=True)
+          
+      bpy.data.collections.remove(col, do_unlink=True)
