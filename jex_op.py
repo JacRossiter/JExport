@@ -12,7 +12,7 @@ class JEXPORT_OT_ExportOperator(Operator):
     def execute(self, context):
 
         bat_export = JEXPORT_Export(context)
-        bat_export.do_export()
+        bat_export.export()
         
         self.report({'INFO'}, "Exported to " + context.scene.engine_folder)
         return {'FINISHED'}

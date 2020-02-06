@@ -56,6 +56,7 @@ class JEXPORT_PT_Panel_Settings(Panel):
         col.prop(context.scene, "unreal_only", text="unreal prefix only")
         col.prop(context.scene, "remove_unreal", text="remove unreal prefix")    
         col.prop(context.scene, "debug_export", text="export")    
+        col.prop(context.scene, "debug_keep_duplicated", text="keep duplicated")    
         
 
 
@@ -107,8 +108,6 @@ class JEXPORT_PT_Panel_Export_Textures(Panel):
         split = split.split()
         col = split.column()
         col.prop(context.scene, "texture_folder", text="")
-
-
         row = layout.row(align=True)
         row.scale_y = 1.5
         row.operator('object.jex_ot_exporttextures', text='Export')

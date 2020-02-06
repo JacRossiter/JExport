@@ -30,6 +30,10 @@ bpy.types.Scene.debug_export = BoolProperty(name="dont export",
                 default=True,
                 description="easy way to stop actual export happening")
 
+bpy.types.Scene.debug_keep_duplicated = BoolProperty(name="keep duplicated",
+                default=False,
+                description="keep duplicated and merged collection so you can see whats going on")
+
 bpy.types.Scene.engine_folder = StringProperty(name="engine folder", 
                subtype="DIR_PATH", 
                description="Directory to export the fbx files into")
