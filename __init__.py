@@ -100,8 +100,9 @@ bpy.types.Scene.export_smoothing = EnumProperty(name="Smoothing",
                 
 bpy.types.Scene.export_target = EnumProperty(name="Target",
                 description="Defines whether to export Object or Collection",
+                default='BOTH',
                 items=(
-                    ('BOTH', 'Both', 'Export Both',3),
+                    ('BOTH', 'Both', 'Export Both',2),
                     ('OBJECT', 'Object', 'Export Objects',0),
                     ('COLLECTION', 'Collection', 'Export Collections',1)
                     )

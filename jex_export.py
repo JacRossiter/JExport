@@ -21,6 +21,8 @@ class JEXPORT_Export:
     self.__texture_type = context.scene.texture_type
     self.__obj_list = []
     self.__obj_pos_list = []
+    self.__exclude_character = "*"
+    self.__merge_character = "&"
     print("----EXPORT INIT----") #just see when this is called, safe to delete
 
   def exportfbx(self):
@@ -57,7 +59,7 @@ class JEXPORT_Export:
       self.createColletionList()
 
     self.export()
-    
+        
     bpy.context.area.type = area
 
   def checkPaths(self):
@@ -68,8 +70,10 @@ class JEXPORT_Export:
 
   def createObjectList(self):
     for obj in bpy.data.objects:
+      
       #if self.__selected_only == True and obj.selec
       if obj.users_collection[0].name == "Master Collection": #in base of scene
+        print("bbb")
         if self.validForExport(obj) == False:          
           continue
         self.__obj_list.append(["OBJECT", "", [obj], True]) 
@@ -81,8 +85,12 @@ class JEXPORT_Export:
       if self.treatAsFolder(col) == True:
         for obj in col.objects:
           self.__obj_list.append(["OBJECT", col.name, [obj], True])
-      else:
-        self.__obj_list.append(["COLLECTION", col.name, col.objects, False])
+          continue
+      if self.__merge_character in col.name:
+        duplicatedCol = self.duplicateCollection(col)
+        self.__obj_list.append(["COLLECTION", duplicatedCol.name, duplicatedCol.objects, False])
+        continue
+      self.__obj_list.append(["COLLECTION", col.name, col.objects, False])
   
   def treatAsFolder(self, item):
     #export objects collections whos names end with \ or / to individual files
@@ -91,7 +99,7 @@ class JEXPORT_Export:
     return False
 
   def validForExport(self, item):
-    if "*" in item.name:
+    if self.__exclude_character in item.name:
       return False
     if item.hide_viewport:
       return False
@@ -111,8 +119,22 @@ class JEXPORT_Export:
             return False
           return True
     except:
-      pass    
+      pass
     return False
+
+  def removeOrReplaceCharacters(self, itemName):
+    charToRemoveList = ["&"]
+    charToReplaceList = [["/","\\"]]
+    
+    for i in charToRemoveList:
+      if i in itemName:
+        itemName = itemName.replace(i,"")
+
+    for i in charToReplaceList:
+      if i[0] in itemName:
+        itemName = itemName.replace(i[0],i[1])        
+    
+    return itemName
 
   def export(self):    
     itemName =""
@@ -122,7 +144,7 @@ class JEXPORT_Export:
     
     #__obj_list is (type, colletion, object_list[], get_moved_BOOL)
     for obj in self.__obj_list:
-      # Desect all objects
+      # Deselct all objects
       bpy.ops.object.select_all(action='DESELECT')      
 
       #prepare objects for export
@@ -140,9 +162,8 @@ class JEXPORT_Export:
       elif obj[0] == "COLLECTION":
         itemName = obj[1]
       
-      if "/" in itemName:
-        itemName = itemName.replace("/", "\\")
-
+      itemName = self.removeOrReplaceCharacters(itemName)
+      
       if "\\" in itemName:
         exportFolder = self.__engine_folder + itemName.rsplit('\\', 1)[0] + "\\"
       else:
@@ -177,3 +198,71 @@ class JEXPORT_Export:
     #loop list and set object to old position
     for o in self.__obj_pos_list:
       o[0].location = o[1]
+
+  def makeNewCollection(self, name):
+      try:
+          if bpy.data.collections[name]:
+              targetCollection = bpy.data.collections[name]
+      except:
+          targetCollection = bpy.data.collections.new(name)
+          bpy.context.scene.collection.children.link(targetCollection)
+      return targetCollection
+
+  def dupliateObject(self, obj, collectionName):
+      if obj.type != "MESH":
+        return
+      mergePrefix = "_MergeMe_"
+      objData = obj.data.copy()         
+      newObj = bpy.data.objects.new(mergePrefix + obj.name, objData)   
+      collectionName.objects.link(newObj) 
+
+      newObj.matrix_world = obj.matrix_world                                        
+      newObj.rotation_euler = obj.rotation_euler
+
+      for vertexGroup in obj.vertex_groups:  
+          newObj.vertex_groups.new(vertexGroup.name)
+
+      self.copyModifier(obj,newObj)
+
+  def copyModifier(self, source, target):
+      active_object = source
+      target_object = target
+
+      for mSrc in active_object.modifiers:
+          mDst = target_object.modifiers.get(mSrc.name, None)
+          if not mDst:
+              mDst = target_object.modifiers.new(mSrc.name, mSrc.type)
+
+          # collect names of writable properties
+          properties = [p.identifier for p in mSrc.bl_rna.properties
+                        if not p.is_readonly]
+
+          # copy those properties
+          for prop in properties:
+              setattr(mDst, prop, getattr(mSrc, prop))
+
+  def applyModifiers(self, ob):
+      #would be better to do without bpy.ops
+      bpy.context.view_layer.objects.active = ob
+      for mod in ob.modifiers:
+          bpy.ops.object.modifier_apply(modifier = mod.name)
+
+  def duplicateCollection(self, col):
+      for obj in bpy.context.selected_objects:#is this needed
+          obj.select_set(False)
+
+      if col.name == "Master Collection":
+          return
+      if self.__merge_character not in col.name:
+          return
+      newName = col.name.replace(self.__merge_character, "")
+      newCollection = self.makeNewCollection(newName)
+      for obj in col.objects:
+          self.dupliateObject(obj, newCollection)
+      for newObj in newCollection.objects:
+          self.applyModifiers(newObj)
+          newObj.select_set(True)
+      bpy.ops.object.join()
+      bpy.context.active_object.name = newName #is this needed
+      
+      return newCollection

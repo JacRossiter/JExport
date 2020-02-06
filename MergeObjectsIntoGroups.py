@@ -1,5 +1,13 @@
 import bpy
 
+scn = bpy.context.scene
+objectsInGroup = []
+groups = []
+mergePrefix = "_MergeMe_"
+mergeCharacter = "&"
+collections = [bpy.context.collection]
+collections = bpy.data.collections
+
 def makeNewCollection(name):
     try:
         if bpy.data.collections[name]:
@@ -10,7 +18,6 @@ def makeNewCollection(name):
     return targetCollection
 
 def dupliateObject(obj, collectionName):    
-    
     objData = obj.data.copy()         
     newObj = bpy.data.objects.new(mergePrefix + obj.name, objData)   
     collectionName.objects.link(newObj) 
@@ -21,7 +28,7 @@ def dupliateObject(obj, collectionName):
     for vertexGroup in obj.vertex_groups:  
         newObj.vertex_groups.new(vertexGroup.name)
 
-    copyModifier(obj,newObj)                        
+    copyModifier(obj,newObj)
 
 def copyModifier(source, target):
     active_object = source
@@ -42,31 +49,26 @@ def copyModifier(source, target):
 
 def applyModifiers(ob):
     #would be better to do without bpy.ops
-
     bpy.context.view_layer.objects.active = ob
     for mod in ob.modifiers:
         bpy.ops.object.modifier_apply(modifier = mod.name)
 
-scn = bpy.context.scene
-objectsInGroup = []
-groups = []
-mergePrefix = "_MergeMe_"
-collections = [bpy.context.collection]
-collections = bpy.data.collections
+def duplicateColletion():
+    for obj in bpy.context.selected_objects:
+        obj.select_set(False)
 
-for obj in bpy.context.selected_objects:
-    obj.select_set(False)
+    for col in collections:
+        if col.name == "Master Collection":
+            continue
+        if mergeCharacter not in col.name:
+            continue
+        newCollection = makeNewCollection(col.name + "_!&&!_")    
+        for obj in col.objects:
+            dupliateObject(obj, newCollection)
+        for newObj in newCollection.objects:
+            applyModifiers(newObj)
+            newObj.select_set(True)
+        bpy.ops.object.join()
+        bpy.context.active_object.name = col.name
 
-for col in collections:
-    if col.name == "Master Collection":
-        continue
-    if "&" not in col.name:
-        continue
-    newCollection = makeNewCollection(col.name + "_&&")    
-    for obj in col.objects:
-        dupliateObject(obj, newCollection)
-    for newObj in newCollection.objects:
-        applyModifiers(newObj)
-        newObj.select_set(True)
-    bpy.ops.object.join()
-    bpy.context.active_object.name = col.name        
+duplicateColletion()        
