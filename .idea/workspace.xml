@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="0428e820-7f4b-4d9f-bf82-dab1a1392f02" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FavoritesManager">
+    <favorites_list name="JExport" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1XZGuwYuq9FTFfdsxhxyqoMC3bR" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="last_opened_file_path" value="C:/Blender/blender_autocomplete-master/2.81a" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="0428e820-7f4b-4d9f-bf82-dab1a1392f02" name="Default Changelist" comment="" />
+      <created>1581246429339</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1581246429339</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="1712" y="967" key="#com.jetbrains.python.refactoring.move.PyMakeFunctionTopLevelDialog" timestamp="1581262565941">
+      <screen x="0" y="0" width="3840" height="2120" />
+    </state>
+    <state x="1712" y="967" key="#com.jetbrains.python.refactoring.move.PyMakeFunctionTopLevelDialog/0.0.3840.2120/-1440.0.1440.2520/3840.0.1440.2520@0.0.3840.2120" timestamp="1581262565941" />
+    <state x="1563" y="1316" key="FileChooserDialogImpl" timestamp="1581261188686">
+      <screen x="0" y="0" width="3840" height="2120" />
+    </state>
+    <state x="1563" y="1316" key="FileChooserDialogImpl/0.0.3840.2120/-1440.0.1440.2520/3840.0.1440.2520@0.0.3840.2120" timestamp="1581261188686" />
+    <state x="1523" y="583" width="998" height="721" key="SettingsEditor" timestamp="1581261223030">
+      <screen x="0" y="0" width="3840" height="2120" />
+    </state>
+    <state x="1523" y="583" width="998" height="721" key="SettingsEditor/0.0.3840.2120/-1440.0.1440.2520/3840.0.1440.2520@0.0.3840.2120" timestamp="1581261223030" />
+    <state x="1621" y="884" key="com.intellij.ide.util.TipDialog" timestamp="1581246434683">
+      <screen x="0" y="0" width="3840" height="2120" />
+    </state>
+    <state x="1621" y="884" key="com.intellij.ide.util.TipDialog/0.0.3840.2120/-1440.0.1440.2520/3840.0.1440.2520@0.0.3840.2120" timestamp="1581246434683" />
+    <state x="1661" y="703" key="refactoring.ChangeSignatureDialog" timestamp="1581261948822">
+      <screen x="0" y="0" width="3840" height="2120" />
+    </state>
+    <state x="1661" y="703" key="refactoring.ChangeSignatureDialog/0.0.3840.2120/-1440.0.1440.2520/3840.0.1440.2520@0.0.3840.2120" timestamp="1581261948822" />
+    <state x="1583" y="495" width="672" height="678" key="search.everywhere.popup" timestamp="1581262606592">
+      <screen x="0" y="0" width="3840" height="2120" />
+    </state>
+    <state x="1583" y="495" width="672" height="678" key="search.everywhere.popup/0.0.3840.2120/-1440.0.1440.2520/3840.0.1440.2520@0.0.3840.2120" timestamp="1581262606592" />
+  </component>
+</project>
