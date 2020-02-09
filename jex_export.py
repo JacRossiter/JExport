@@ -119,7 +119,7 @@ class JEXPORT_Export:
       if obj.users_collection[0].name == "Master Collection": #in base of scene
         if self.validForExport(obj) == False:          
           continue
-        self.__item_list.append(["OBJECT", "", [obj], True]) 
+        self.__item_list.append(["OBJECT", "", [obj], True])
 
   def createColletionList(self):
     for col in bpy.data.collections:
@@ -134,8 +134,7 @@ class JEXPORT_Export:
         self.__item_list.append(["COLLECTION", duplicatedCol.name, duplicatedCol.objects, False])
         self.__collections_to_delete.append(duplicatedCol)
         continue
-      self.getObectsInCollections(col)
-      self.__item_list.append(["COLLECTION", col.name, col.objects, False])
+      self.__item_list.append(["COLLECTION", col.name, self.getObectsInCollections(col), False])
   
   def treatAsFolder(self, item):
     #export objects collections whos names end with \ or / to individual files
@@ -254,7 +253,7 @@ class JEXPORT_Export:
   def applyModifiers(self, ob):    
       bpy.context.view_layer.objects.active = ob
       for mod in ob.modifiers:
-          bpy.ops.object.modifier_apply(modifier = mod.name)
+        bpy.ops.object.modifier_apply(modifier = mod.name)
 
   def mergeObjects(self, name):
     bpy.ops.object.join()
@@ -270,19 +269,22 @@ class JEXPORT_Export:
       bpy.data.collections.remove(col, do_unlink=True)
 
   def getObectsInCollections(self, c):
-    c_list = []
-    objectList = self.collectionsRecursive(c, c_list)
-    for o in objectList:
-      print(o)
+    child_collections = []
+    child_objects = []
+    self.collectionsRecursive(c, child_collections)
+    for item in child_collections:
+      for obj in item.objects:
+        child_objects.append(obj)
+    return child_objects
 
   def collectionsRecursive(self, c, c_list):    
     #if not c.exclude:
     c_list.append(c)
     if c.children:
-        for _c in c.children:
-            self.collectionsRecursive(_c, c_list)
+      for _c in c.children:
+        self.collectionsRecursive(_c, c_list)
     else:
-        return c_list
+      return c_list
 
 
   
