@@ -3,6 +3,7 @@ import os
 import fnmatch
 from .jex_utils import *
 
+
 class JEXPORT_Export:
     def __init__(self, context):
         self.__context = context
@@ -64,7 +65,8 @@ class JEXPORT_Export:
         folder_name = ""
         export_scale = self.__export_exportScale  # TODO this is not used
 
-        for item in self.__item_list:
+        for item in self.__item_list: # (custom type, collection, object_list[], get_moved_BOOL)
+            print(item)
             # Deselect all objects
             bpy.ops.object.select_all(action='DESELECT')
 
@@ -86,13 +88,13 @@ class JEXPORT_Export:
             item_name = self.remove_or_replace_characters(item_name)
 
             if "\\" in item_name:
-                exportFolder = self.__engine_folder + item_name.rsplit('\\', 1)[0] + "\\"
+                export_folder = self.__engine_folder + item_name.rsplit('\\', 1)[0] + "\\"
             else:
-                exportFolder = self.__engine_folder
+                export_folder = self.__engine_folder
 
             # Make folder
             try:
-                os.makedirs(exportFolder)
+                os.makedirs(export_folder)
             except:
                 pass
 
@@ -120,14 +122,24 @@ class JEXPORT_Export:
 
     def create_object_list(self):
         for obj in bpy.data.objects:
+            #print(obj.users_collection[0].name)
             if obj.users_collection[0].name == "Master Collection":  # in base of scene
-                if not self.valid_for_export(obj):
+                if not self.valid_for_export(obj,False):
                     continue
                 self.__item_list.append(["OBJECT", "", [obj], True])
 
     def create_collection_list(self):
-        for col in bpy.data.collections:
-            if not self.valid_for_export(col):
+        enabled_collections = []
+        c = bpy.context.view_layer.layer_collection
+        self.collections_recursive_with_limit(c, enabled_collections)
+
+        col_list = []  # list of collections not layer collections
+        for i in enabled_collections:
+            col_list.append(i.collection)
+
+        for col in col_list:
+            print(col)
+            if not self.valid_for_export(col, True):
                 continue
             if self.treat_as_folder(col):
                 for obj in col.objects:
@@ -141,6 +153,7 @@ class JEXPORT_Export:
     def make_duplicates(self, col):
         duplicated_col = self.duplicate_collection(col)
         self.__item_list.append(["COLLECTION", duplicated_col.name, duplicated_col.objects, False])
+        #self.duplicate_collections_recursive(col)
 
     def treat_as_folder(self, item):
         # export objects collections whos names end with \ or / to individual files
@@ -148,27 +161,23 @@ class JEXPORT_Export:
             return True
         return False
 
-    def valid_for_export(self, item):
+    def valid_for_export(self, item, is_collection):
         if self.__exclude_character in item.name:
             return False
         if item.hide_viewport:
             return False
-        try:
+        if is_collection:
             for o in bpy.context.view_layer.layer_collection.children:
                 if o.collection == item:
-                    if o.hide_viewport == True or o.exclude == True:
+                    if o.hide_viewport or o.exclude:
                         return False
                     return True
-        except:
-            pass
-        try:
+        else:
             for o in bpy.context.scene.objects:
                 if o == item:
-                    if o.hide_viewport == True:
+                    if o.hide_viewport:
                         return False
                     return True
-        except:
-            pass
         return False
 
     def remove_or_replace_characters(self, item_name):
@@ -221,7 +230,7 @@ class JEXPORT_Export:
     def duplicate_object(self, obj, collection_name):
         if obj.type != "MESH":
             return
-        if not self.valid_for_export(obj):
+        if not self.valid_for_export(obj, False):
             return
 
         merge_prefix = "_M_"
@@ -273,19 +282,30 @@ class JEXPORT_Export:
             bpy.data.collections.remove(col, do_unlink=True)
 
     def get_objects_in_collections(self, c):
-        child_collections = []
         child_objects = []
-        self.collections_recursive(c, child_collections)
-        for item in child_collections:
-            for obj in item.objects:
-                child_objects.append(obj)
+        for obj in c.objects:
+            child_objects.append(obj)
         return child_objects
 
     def collections_recursive(self, c, c_list):
-        # if not c.exclude:
-        c_list.append(c)
+        if not c.exclude:
+            c_list.append(c)
         if c.children:
             for _c in c.children:
                 self.collections_recursive(_c, c_list)
         else:
             return c_list
+
+    def collections_recursive_with_limit(self, c, c_list):
+        if not c.exclude:
+            c_list.append(c)
+        if c.children and self.__merge_character not in c.name:
+            for _c in c.children:
+                self.collections_recursive_with_limit(_c, c_list)
+        else:
+            return c_list
+
+    def duplicate_collections_recursive(self, col):
+        return
+        dup_col = self.duplicate_collection(col)
+        self.duplicate_collections_recursive_children(col, dup_col)
