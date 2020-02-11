@@ -3,8 +3,7 @@ import os
 import fnmatch
 from .jex_utils import *
 
-
-class JEXPORT_Export:
+class Game_Exporter_Export:
     def __init__(self, context):
         self.__context = context
         self.__debug_export = context.scene.debug_export
@@ -45,7 +44,7 @@ class JEXPORT_Export:
         area = bpy.context.area.type  # do we need this
         bpy.context.area.type = 'VIEW_3D'
 
-        self.check_paths()
+        self.set_empty_paths()
 
         if self.__export_target == 'OBJECT':
             self.create_object_list()
@@ -113,8 +112,9 @@ class JEXPORT_Export:
     def post_export(self):
         self.uncenter_object()
         self.delete_collections()
+        bpy.ops.object.select_all(action='DESELECT') #should reselect objects really        
 
-    def check_paths(self):
+    def set_empty_paths(self):
         if self.__engine_folder == "":
             self.__engine_folder = os.path.dirname(bpy.data.filepath) + "\\"
         if self.__bake_folder == "":
@@ -122,9 +122,9 @@ class JEXPORT_Export:
 
     def create_object_list(self):
         for obj in bpy.data.objects:
-            #print(obj.users_collection[0].name)
+            # print(obj.users_collection[0].name)
             if obj.users_collection[0].name == "Master Collection":  # in base of scene
-                if not self.valid_for_export(obj,False):
+                if not self.valid_for_export(obj, False):
                     continue
                 self.__item_list.append(["OBJECT", "", [obj], True])
 
@@ -138,7 +138,6 @@ class JEXPORT_Export:
             col_list.append(i.collection)
 
         for col in col_list:
-            print(col)
             if not self.valid_for_export(col, True):
                 continue
             if self.treat_as_folder(col):
@@ -152,8 +151,11 @@ class JEXPORT_Export:
 
     def make_duplicates(self, col):
         duplicated_col = self.duplicate_collection(col)
-        self.__item_list.append(["COLLECTION", duplicated_col.name, duplicated_col.objects, False])
-        #self.duplicate_collections_recursive(col)
+        obj_list = []
+        for obj in duplicated_col.objects:
+            obj_list.append(obj)
+        self.duplicate_collections_recursive(col, duplicated_col, obj_list)        
+        self.__item_list.append(["COLLECTION", duplicated_col.name, obj_list, False])
 
     def treat_as_folder(self, item):
         # export objects collections whos names end with \ or / to individual files
@@ -167,11 +169,12 @@ class JEXPORT_Export:
         if item.hide_viewport:
             return False
         if is_collection:
-            for o in bpy.context.view_layer.layer_collection.children:
+            """for o in bpy.context.view_layer.layer_collection.children:
                 if o.collection == item:
                     if o.hide_viewport or o.exclude:
                         return False
-                    return True
+            """                        
+            return True
         else:
             for o in bpy.context.scene.objects:
                 if o == item:
@@ -213,6 +216,7 @@ class JEXPORT_Export:
             self.duplicate_object(obj, new_collection)
         for newObj in new_collection.objects:
             self.apply_modifiers(newObj)
+            print(newObj)
             newObj.select_set(True)
         self.merge_objects(new_collection.name)
         self.__collections_to_delete.append(new_collection)
@@ -285,8 +289,14 @@ class JEXPORT_Export:
         child_objects = []
         for obj in c.objects:
             child_objects.append(obj)
-        return child_objects
+        print(c)
+        print("!!!!!!!!!!!!!!!!!!!!!!!")
+        for child_col in c.children:
+            for obj in child_col.objects:
+                child_objects.append(obj)
 
+        return child_objects
+    
     def collections_recursive(self, c, c_list):
         if not c.exclude:
             c_list.append(c)
@@ -297,15 +307,18 @@ class JEXPORT_Export:
             return c_list
 
     def collections_recursive_with_limit(self, c, c_list):
-        if not c.exclude:
+        if not c.exclude and not c.hide_viewport:
             c_list.append(c)
-        if c.children and self.__merge_character not in c.name:
+        if c.children and self.__merge_character not in c.name and self.__exclude_character not in c.name:
             for _c in c.children:
                 self.collections_recursive_with_limit(_c, c_list)
         else:
             return c_list
 
-    def duplicate_collections_recursive(self, col):
-        return
-        dup_col = self.duplicate_collection(col)
-        self.duplicate_collections_recursive_children(col, dup_col)
+    def duplicate_collections_recursive(self, col, dup_col, obj_list):
+        for c in col.children:
+            if self.valid_for_export(c, True):
+                dup_col.children.link(c)
+                for obj in c.objects:
+                    obj_list.append(obj)
+            

@@ -1,0 +1,28 @@
+import bpy
+
+for collections in scene_layer
+    if collection is valid
+        add collection to collection_list
+
+for collection in collection_list
+    check what to do
+        if normal
+            deselect everything
+            select collection
+            select collection children
+            export selected
+
+        if treat as folder
+            deselect everything
+            select collection
+            select collection children
+            export selected
+
+        if treat as merge
+
+
+
+
+
+
+
