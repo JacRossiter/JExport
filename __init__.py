@@ -104,9 +104,7 @@ classes = (
     JEXPORT_OT_OpenBakeFolder,
     JEXPORT_OT_OpenTextureFolder,
     JEXPORT_PT_Panel_Settings,
-    JEXPORT_PT_Panel_Export_Settings,
-    JEXPORT_PT_Panel_Export_Textures,
-    JEXPORT_PT_Panel_Texture_Settings
+    JEXPORT_PT_Panel_Export_Settings
 )
 
 def register():

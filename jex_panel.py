@@ -120,7 +120,7 @@ class JEXPORT_PT_Panel_Texture_Settings(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_label = "Texture Settings"
-    bl_parent_id = "JEXPORT_PT_Panel_Export_Textures"
+    #bl_parent_id = "JEXPORT_PT_Panel_Export_Textures"
     bl_category = "JEXPORT"
     bl_options = {'DEFAULT_CLOSED'}
     
