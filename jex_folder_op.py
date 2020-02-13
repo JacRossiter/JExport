@@ -2,7 +2,7 @@ import bpy
 
 from bpy.types import Operator
 
-class JExport_OT_OpenFolder(Operator):
+class JEXPORT_OT_OpenFolder(Operator):
   
   bl_idname = "object.jex_ot_openfolder"
   bl_label = "Open Export Folder"
@@ -13,7 +13,7 @@ class JExport_OT_OpenFolder(Operator):
     bpy.ops.wm.path_open(filepath=context.scene.engine_folder)
     return {'FINISHED'}
 
-class JExport_OT_OpenBakeFolder(Operator):
+class JEXPORT_OT_OpenBakeFolder(Operator):
   
   bl_idname = "object.jex_ot_openbakefolder"
   bl_label = "Open Bake Folder"
@@ -25,7 +25,7 @@ class JExport_OT_OpenBakeFolder(Operator):
     return {'FINISHED'}
 
 
-class JExport_OT_OpenTextureFolder(Operator):
+class JEXPORT_OT_OpenTextureFolder(Operator):
   
   bl_idname = "object.jex_ot_opentexturefolder"
   bl_label = "Open Textures Folder"

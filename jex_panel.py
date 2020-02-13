@@ -1,15 +1,34 @@
 import bpy
 from bpy.types import Panel
 
-class JExport_PT_Panel(Panel):
+class JEXPORT_PT_panel(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_label = "Export FBX"
-    bl_category = "JExport"
+    bl_category = "JEXPORT"
     
     def draw(self, context):
         layout = self.layout
         c = layout.column()
+        row = c.row()
+        row = layout.row(align=True)
+        row.scale_y = 1.5
+        row.operator('object.jex_ot_operator', text='Export')
+
+class JEXPORT_PT_Panel_Settings(Panel):
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_label = "What to export?"
+    bl_parent_id = "JEXPORT_PT_panel"
+    bl_category = "JEXPORT"
+    bl_options = {'DEFAULT_CLOSED'}
+    
+    def draw(self, context):
+        
+        layout = self.layout
+        scene = context.scene
+        c = layout.column()
+
         row = c.row()
         split = row.split(factor=0.3)
         c = split.column()
@@ -26,27 +45,6 @@ class JExport_PT_Panel(Panel):
         c = split.column()
         c.prop(context.scene, "bake_folder", text="")
 
-
-        row = layout.row(align=True)
-        row.scale_y = 1.5
-        row.operator('object.jex_ot_operator', text='Export')
-
-        
-
-class JExport_PT_Panel_Settings(Panel):
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_label = "What to export?"
-    bl_parent_id = "JExport_PT_Panel"
-    bl_category = "JExport"
-    bl_options = {'DEFAULT_CLOSED'}
-    
-    def draw(self, context):
-        
-        layout = self.layout
-        scene = context.scene
-        c = layout.column()
-
         ####### Testing Area
 
         #row = layout.row(align=True)
@@ -56,6 +54,7 @@ class JExport_PT_Panel_Settings(Panel):
         row = layout.row()
         row.prop(context.scene, "export_target", text="")
         row.prop(context.scene, "export_type", text="")
+        #row.prop(context.scene, "export_type")
         
         row = layout.row(align=True)
         row.alignment='CENTER'
@@ -63,12 +62,12 @@ class JExport_PT_Panel_Settings(Panel):
         ####### Testing Area
 
 
-class JExport_PT_Panel_Export_Settings(Panel):
+class JEXPORT_PT_Panel_Export_Settings(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_label = "Export Settings"
-    bl_parent_id = "JExport_PT_Panel"
-    bl_category = "JExport"
+    bl_parent_id = "JEXPORT_PT_panel"
+    bl_category = "JEXPORT"
     bl_options = {'DEFAULT_CLOSED'}
     
     def draw(self, context):
@@ -92,15 +91,12 @@ class JExport_PT_Panel_Export_Settings(Panel):
         row = layout.row()
         row.prop(context.scene, "export_smoothing", text="")
 
-
-
-
-class JExport_PT_Panel_Export_Textures(Panel):
+class JEXPORT_PT_Panel_Export_Textures(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_label = "Export Textures"
-    #bl_parent_id = "JExport_PT_Panel"
-    bl_category = "JExport"
+    #bl_parent_id = "JEXPORT_PT_Panel"
+    bl_category = "JEXPORT"
     bl_options = {'DEFAULT_CLOSED'}
     
     def draw(self, context):
@@ -118,14 +114,14 @@ class JExport_PT_Panel_Export_Textures(Panel):
 
         row = layout.row(align=True)
         row.scale_y = 1.5
-        #row.operator('object.jex_ot_exporttextures', text='Export')
+        row.operator('object.jex_ot_exporttextures', text='Export')
 
-class JExport_PT_Panel_Texture_Settings(Panel):
+class JEXPORT_PT_Panel_Texture_Settings(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_label = "Texture Settings"
-    bl_parent_id = "JExport_PT_Panel_Export_Textures"
-    bl_category = "JExport"
+    bl_parent_id = "JEXPORT_PT_Panel_Export_Textures"
+    bl_category = "JEXPORT"
     bl_options = {'DEFAULT_CLOSED'}
     
     def draw(self, context):
@@ -133,8 +129,6 @@ class JExport_PT_Panel_Texture_Settings(Panel):
         layout = self.layout
         scene = context.scene
         c = layout.column()
-        
-        
         row = c.row()
         split = row.split(factor=0.3)
         c = split.column()

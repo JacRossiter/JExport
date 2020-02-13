@@ -1,20 +1,30 @@
 bl_info = {
-    "name" : "JExport",
+    "name" : "JEXPORT",
     "author" : "Jac Rossiter, jayanam",
     "descrtion" : "Batch export as Fbx",
     "blender" : (2, 80, 0),
-    "version" : (0, 3, 1, 6),
-    "location" : "JExport panel",
+    "version" : (0, 3, 1, 7),
+    "location" : "JEXPORT panel",
     "warning" : "",
     "category" : "Export"
 }
 
+import importlib
+
+if "bpy" in locals():    
+    importlib.reload(jex_export)
+    importlib.reload(jex_folder_op)
+    importlib.reload(jex_op)
+    importlib.reload(jex_panel)
+    importlib.reload(jex_utils)
+    
 import bpy
 from bpy.props import *
-
-from . jex_panel import *
-from . jex_op import *
+from . jex_export import *
 from . jex_folder_op import *
+from . jex_op import *
+from . jex_panel import *
+from . jex_utils import *
 
 bpy.types.Scene.engine_folder = StringProperty(name="engine folder", 
                subtype="DIR_PATH", 
@@ -23,11 +33,11 @@ bpy.types.Scene.engine_folder = StringProperty(name="engine folder",
 bpy.types.Scene.bake_folder = StringProperty(name="Bake folder", 
                subtype="DIR_PATH", 
                description="Directory to export the Bake files into")
-#
+
 bpy.types.Scene.texture_folder = StringProperty(name="Texture folder", 
                subtype="DIR_PATH", 
                description="Directory to export the Texture files into")
-#
+
 bpy.types.Scene.center_transform = BoolProperty(name="Center transform",
                 default=True,
                 description="Set the pivot point of the object to the center")
@@ -59,6 +69,7 @@ bpy.types.Scene.export_smoothing = EnumProperty(name="Smoothing",
 bpy.types.Scene.export_target = EnumProperty(name="Target",
                 description="Defines whether to export Object or Collection",
                 items=(
+                    ('BOTH', 'Both', 'Export Both',3),
                     ('OBJECT', 'Object', 'Export Objects',0),
                     ('COLLECTION', 'Collection', 'Export Collections',1)
                     )
@@ -84,36 +95,29 @@ bpy.types.Scene.texture_type = EnumProperty(name="Type",
                     )
                 )
 
-classes = ( JExport_PT_Panel,
-JExport_OT_ExportOperator,
-JExport_OT_ExportTexturesOperator,
-JExport_OT_RefreshTextures, 
-JExport_OT_OpenFolder, 
-JExport_OT_OpenBakeFolder,
-JExport_OT_OpenTextureFolder,
-JExport_PT_Panel_Settings,
-JExport_PT_Panel_Export_Settings,
-JExport_PT_Panel_Export_Textures,
-JExport_PT_Panel_Texture_Settings)
-
+classes = (
+    JEXPORT_PT_panel,
+    JEXPORT_OT_ExportOperator,
+    JEXPORT_OT_ExportTexturesOperator,
+    JEXPORT_OT_RefreshTextures, 
+    JEXPORT_OT_OpenFolder, 
+    JEXPORT_OT_OpenBakeFolder,
+    JEXPORT_OT_OpenTextureFolder,
+    JEXPORT_PT_Panel_Settings,
+    JEXPORT_PT_Panel_Export_Settings,
+    JEXPORT_PT_Panel_Export_Textures,
+    JEXPORT_PT_Panel_Texture_Settings
+)
 
 def register():
     from bpy.utils import register_class
     for cls in classes:
         register_class(cls)
-
-    
-    #bpy.types.Scene.rno_bool_exportall = bpy.props.BoolProperty(name='Export all', default=True)
-
           
 def unregister():
     from bpy.utils import unregister_class
     for cls in reversed(classes):
         unregister_class(cls)
-
-    #del bpy.types.Scene.rno_bool_exportall
     
-
-
 if __name__ == "__main__":
     register()
