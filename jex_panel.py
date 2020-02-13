@@ -118,7 +118,7 @@ class JExport_PT_Panel_Export_Textures(Panel):
 
         row = layout.row(align=True)
         row.scale_y = 1.5
-        row.operator('object.jex_ot_exporttextures', text='Export')
+        #row.operator('object.jex_ot_exporttextures', text='Export')
 
 class JExport_PT_Panel_Texture_Settings(Panel):
     bl_space_type = "VIEW_3D"

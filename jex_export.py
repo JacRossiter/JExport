@@ -223,7 +223,7 @@ class JExport_ExportTextures:
     for image in D.images:
       if not image.has_data:
           continue
-      overwrite = 'true'
+      #overwrite = 'true'
 
       
       
@@ -249,10 +249,10 @@ class JExport_ExportTextures:
 
 
       #removes old file
-      print("Exported: ", self.__texture_type)
-      if overwrite == 'true':
-        print('deleting ' + original_image)
-        os.remove(original_image)
+      #print("Exported: ", self.__texture_type)
+      #if overwrite == 'true':
+      #  print('deleting ' + original_image)
+      #  os.remove(original_image)
 
 
     print('Exported Textures')
