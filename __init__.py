@@ -40,7 +40,7 @@ bpy.types.Scene.texture_folder = StringProperty(name="Texture folder",
 
 bpy.types.Scene.center_transform = BoolProperty(name="Center transform",
                 default=True,
-                description="Set the pivot point of the object to the center")
+                description="Temporarily move assets to grid zero on export. For collections-if you would like your objects to share a pivot point-parent objects to another object or empty.")
 
 bpy.types.Scene.apply_transform = BoolProperty(name="Apply transform",
                 default=True,
@@ -76,16 +76,16 @@ bpy.types.Scene.export_target = EnumProperty(name="Target",
                 )
 
 bpy.types.Scene.export_type = EnumProperty(name="Type",
-                description="Defines whether to for Baking or for Engine",
+                description="Defines whether exporting for Baking or for Engine",
                 items=(
-                    ('ENGINE', 'Engine', 'EXPORT to Engine',0),
-                    ('BAKE', 'Bake', 'Export to Bake',1)
+                    ('ENGINE', 'Engine', 'Export all assets with SM_ Prefix to Engine Directory',0),
+                    ('BAKE', 'Bake', 'Export all assets with either _low or _high suffix assets to Bake Directory',1)
                     )
                 )
 
 bpy.types.Scene.export_prefix = BoolProperty(name="Export Prefix",
                 default=True,
-                description="Includes Prefix in Export")
+                description="Includes Prefix in Export name. Disable if not desired")
 
 bpy.types.Scene.texture_type = EnumProperty(name="Type",
                 description="Defines What Texture type to use",

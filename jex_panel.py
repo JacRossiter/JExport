@@ -13,12 +13,24 @@ class JEXPORT_PT_panel(Panel):
         row = c.row()
         row = layout.row(align=True)
         row.scale_y = 1.5
-        row.operator('object.jex_ot_operator', text='Export')
+        #row.operator('object.jex_ot_operator', text='Export', )
+        if bpy.context.scene.export_target == 'OBJECT':
+            
+            row.operator('object.jex_ot_operator', text='Export Objects', )
+        if bpy.context.scene.export_target == 'COLLECTION':
+            row.operator('object.jex_ot_operator', text='Export Collections', )
+        if bpy.context.scene.export_target == 'BOTH':
+            row.operator('object.jex_ot_operator', text='Export Both', )
+        row = layout.row()
+        row.prop(context.scene, "export_target", text="")
+        row.prop(context.scene, "export_type", text="")
+        row = layout.row(align=True)
+        row.alignment='CENTER'
 
 class JEXPORT_PT_Panel_Settings(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_label = "What to export?"
+    bl_label = "Where to export?"
     bl_parent_id = "JEXPORT_PT_panel"
     bl_category = "JEXPORT"
     bl_options = {'DEFAULT_CLOSED'}
@@ -26,7 +38,6 @@ class JEXPORT_PT_Panel_Settings(Panel):
     def draw(self, context):
         
         layout = self.layout
-        scene = context.scene
         c = layout.column()
 
         row = c.row()
@@ -51,13 +62,7 @@ class JEXPORT_PT_Panel_Settings(Panel):
         #row.alignment='CENTER'
         #row.label(text='--- Testing Area ---')
 
-        row = layout.row()
-        row.prop(context.scene, "export_target", text="")
-        row.prop(context.scene, "export_type", text="")
-        #row.prop(context.scene, "export_type")
         
-        row = layout.row(align=True)
-        row.alignment='CENTER'
 
         ####### Testing Area
 
@@ -73,13 +78,11 @@ class JEXPORT_PT_Panel_Export_Settings(Panel):
     def draw(self, context):
         
         layout = self.layout
-        scene = context.scene
 
         #col = layout.row()
         col = layout.column(align=True)
         
-        if context.scene.export_target == 'OBJECT':
-            col.prop(context.scene, "center_transform", text="Move to Zero")
+        col.prop(context.scene, "center_transform", text="Move to Zero")
         
         col.prop(context.scene, "apply_transform", text="Apply Transform")
         col.prop(context.scene, "apply_modifiers", text="Apply Modifiers")
@@ -127,7 +130,6 @@ class JEXPORT_PT_Panel_Texture_Settings(Panel):
     def draw(self, context):
         
         layout = self.layout
-        scene = context.scene
         c = layout.column()
         row = c.row()
         split = row.split(factor=0.3)

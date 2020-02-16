@@ -6,7 +6,7 @@ from . jex_export import JEXPORT_Export, JEXPORT_ExportTextures
 class JEXPORT_OT_ExportOperator(Operator):
     bl_idname = "object.jex_ot_operator"
     bl_label = "Batch Export"
-    bl_description = "Export selected objects as fbx" 
+    bl_description = "Export Assets as FBX" 
     bl_options = {'REGISTER'}
     
     def execute(self, context):
