@@ -1,5 +1,5 @@
 import bpy
-
+import os
 from bpy.types import Operator
 
 class JEXPORT_OT_OpenFolder(Operator):
@@ -10,7 +10,13 @@ class JEXPORT_OT_OpenFolder(Operator):
   bl_options = {'REGISTER'}
 
   def execute(self, context):
-    bpy.ops.wm.path_open(filepath=context.scene.engine_folder)
+    if "../" or "..\\" or "//" in bpy.context.scene.engine_folder:
+      filepath = bpy.data.filepath + "\\..\\"
+      exportfolder = os.path.dirname(filepath + context.scene.engine_folder)
+      print("Opening EngineFolder: ", exportfolder)
+      bpy.ops.wm.path_open(filepath=exportfolder)
+    else:
+      bpy.ops.wm.path_open(filepath=context.scene.engine_folder)
     return {'FINISHED'}
 
 class JEXPORT_OT_OpenBakeFolder(Operator):
@@ -21,7 +27,13 @@ class JEXPORT_OT_OpenBakeFolder(Operator):
   bl_options = {'REGISTER'}
 
   def execute(self, context):
-    bpy.ops.wm.path_open(filepath=context.scene.bake_folder)
+    if "../" or "..\\" or "//" in bpy.context.scene.bake_folder:
+      filepath = bpy.data.filepath + "\\..\\"
+      exportfolder = os.path.dirname(filepath + context.scene.bake_folder)
+      print("Opening BakeFolder: ", exportfolder)
+      bpy.ops.wm.path_open(filepath=exportfolder)
+    else:
+      bpy.ops.wm.path_open(filepath=context.scene.bake_folder)
     return {'FINISHED'}
 
 

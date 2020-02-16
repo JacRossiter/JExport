@@ -57,7 +57,7 @@ class JEXPORT_Export:
 
     obj = bpy.context.view_layer.objects.active
     bakefolder = self.__bake_folder + "/"
-    enginefolder = self.__engine_folder + "/"
+    enginefolder = self.__engine_folder 
 
     area = bpy.context.area.type
     bpy.context.area.type = 'VIEW_3D'
@@ -74,7 +74,15 @@ class JEXPORT_Export:
       # Bake Settings
       if self.__export_type == 'BAKE':
         print("Bake Mode")
-        exportfolder = bakefolder
+        if "../" or "..\\" or "//" in bakefolder:
+          filepath = bpy.data.filepath + "\\..\\"
+          exportfolder = os.path.dirname(filepath + bakefolder + "\\")
+        else:
+          exportfolder = bakefolder
+          try:
+            os.makedirs(exportfolder)
+          except:
+            pass
         exportscale = self.__export_exportScale/100
         
         obj_list = [obj for obj in bpy.context.visible_objects if fnmatch.fnmatch(obj.name, "*_low") or fnmatch.fnmatch(obj.name, "*_high")]
@@ -82,8 +90,16 @@ class JEXPORT_Export:
 
       # Engine Settings
       elif self.__export_type == 'ENGINE':
-        print("Bake Mode")
-        exportfolder = enginefolder
+        print("Engine Mode")
+        if "../" or "..\\" or "//" in enginefolder:
+          filepath = bpy.data.filepath + "\\..\\"
+          exportfolder = os.path.dirname(filepath + enginefolder + "\\")
+        else:
+          exportfolder = enginefolder
+          try:
+            os.makedirs(exportfolder)
+          except:
+            pass
         exportscale = self.__export_exportScale
 
         obj_list = [obj for obj in bpy.context.visible_objects if fnmatch.fnmatch(obj.name, "SM_*")]
@@ -101,24 +117,28 @@ class JEXPORT_Export:
         for child in get_children(obj):
           child.select_set(state=True)
         
-        exportfolder = self.__engine_folder + obj.users_collection[0].name + "//" + "Meshes" + "//"
-        try:
-          os.makedirs(exportfolder)
-        except:
-          pass
+        if "../" or "..\\" or "//" in enginefolder:
+          filepath = bpy.data.filepath + "\\..\\"
+          exportfolder = os.path.dirname(filepath + enginefolder + "\\")
+        else:
+          exportfolder = enginefolder
+          try:
+            os.makedirs(exportfolder)
+          except:
+            pass
 
         export_name = obj.name
         if self.__export_prefix == False:
           obj.name = obj.name.replace('SM_', '')
 
-          bpy.ops.export_scene.fbx(check_existing=False, filepath=exportfolder + obj.name + ".fbx", filter_glob="*.fbx",use_selection=True,use_armature_deform_only=True,
+          bpy.ops.export_scene.fbx(check_existing=False, filepath=exportfolder + "/" + obj.name + ".fbx", filter_glob="*.fbx",use_selection=True,use_armature_deform_only=True,
           mesh_smooth_type=self.__context.scene.export_smoothing,add_leaf_bones=False,global_scale=exportscale,bake_space_transform=self.__export_applyTransform,
           use_mesh_modifiers=self.__export_applyModifiers,path_mode='ABSOLUTE')
 
           obj.name = "SM_" + obj.name
 
         else:
-          bpy.ops.export_scene.fbx(check_existing=False, filepath=exportfolder + export_name + ".fbx", filter_glob="*.fbx",use_selection=True,use_armature_deform_only=True,
+          bpy.ops.export_scene.fbx(check_existing=False, filepath=exportfolder + "/" + export_name + ".fbx", filter_glob="*.fbx",use_selection=True,use_armature_deform_only=True,
           mesh_smooth_type=self.__context.scene.export_smoothing,add_leaf_bones=False,global_scale=exportscale,bake_space_transform=self.__export_applyTransform,
           use_mesh_modifiers=self.__export_applyModifiers,path_mode='ABSOLUTE')
 
@@ -141,7 +161,15 @@ class JEXPORT_Export:
 
       # Bake Settings
       if self.__export_type == 'BAKE':
-        exportfolder = bakefolder
+        if "../" or "..\\" or "//" in bakefolder:
+          filepath = bpy.data.filepath + "\\..\\"
+          exportfolder = os.path.dirname(filepath + bakefolder + "\\")
+        else:
+          exportfolder = bakefolder
+          try:
+            os.makedirs(exportfolder)
+          except:
+            pass
         exportscale = self.__export_exportScale/100
         
         for c in enabled_collections:
@@ -151,11 +179,15 @@ class JEXPORT_Export:
 
       # Engine Settings
       elif self.__export_type == 'ENGINE':
-        exportfolder = enginefolder
-        try:
-          os.makedirs(exportfolder)
-        except:
-          pass
+        if "../" or "..\\" or "//" in enginefolder:
+          filepath = bpy.data.filepath + "\\..\\"
+          exportfolder = os.path.dirname(filepath + enginefolder)
+        else:
+          exportfolder = enginefolder
+          try:
+            os.makedirs(exportfolder)
+          except:
+            pass
         exportscale = self.__export_exportScale
 
         print('generating export list')
@@ -180,7 +212,7 @@ class JEXPORT_Export:
           export_name = c.name.replace('SM_', '')
           print('exporting ',export_name)
 
-        bpy.ops.export_scene.fbx(check_existing=False, filepath=exportfolder + export_name + ".fbx", filter_glob="*.fbx",use_selection=True,use_armature_deform_only=True,
+        bpy.ops.export_scene.fbx(check_existing=False, filepath=exportfolder + "/" + export_name + ".fbx", filter_glob="*.fbx",use_selection=True,use_armature_deform_only=True,
         mesh_smooth_type=self.__context.scene.export_smoothing,add_leaf_bones=False,global_scale=exportscale,bake_space_transform=self.__export_applyTransform,
         use_mesh_modifiers=self.__export_applyModifiers,path_mode='ABSOLUTE')
         print('export complete')
