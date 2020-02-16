@@ -1,9 +1,9 @@
 bl_info = {
     "name" : "JEXPORT",
-    "author" : "Jac Rossiter, jayanam",
+    "author" : "Jac Rossiter, Frankie Hobbins, jayanam",
     "descrtion" : "Batch export as Fbx",
     "blender" : (2, 80, 0),
-    "version" : (0, 3, 1, 7),
+    "version" : (0, 3, 1, 8),
     "location" : "JEXPORT panel",
     "warning" : "",
     "category" : "Export"
